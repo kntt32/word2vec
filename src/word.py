@@ -1,6 +1,7 @@
 class Token:
     def __init__(self, word: str):
         self.word = word.strip()
+        self.count = 0
 
     def as_str(self):
         return self.word
@@ -45,10 +46,13 @@ class WordBox:
 
     def add(self, token: Token):
         if token not in self.box:
+            token.count = 1
             self.box.append(token)
             return len(self.box) - 1
         else:
-            return self.box.index(token)
+            index = self.box.index(token)
+            self.box[index].count += 1
+            return index
 
     def add_from_str(self, s: str):
         for token in Tokenizer(s).generator():
@@ -57,7 +61,7 @@ class WordBox:
     def __str__(self):
         string = "WordBox["
         for token in self.box:
-            string += "\"" + str(token) + "\"" + ", "
+            string += f"{token.count}\"{token}\", "
         return string
 
     def __contains__(self, token: Token):

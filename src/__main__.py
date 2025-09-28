@@ -10,6 +10,7 @@ corpus = corpus.Corpus("Hello, World! Hello in python", wordbox)
 
 print(corpus)
 print(corpus.corpus)
+print(wordbox)
 print(corpus.into_target(1))
 
 model = model.Word2Vec(3)
