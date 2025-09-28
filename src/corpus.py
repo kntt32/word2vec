@@ -8,8 +8,19 @@ class Corpus:
         for token in word.Tokenizer(corpus).generator():
             self.corpus.append(self.word_box.add(token))
 
-    def to_long_tensor(self):
-        return torch.tensor([self.corpus], dtype=torch.long)
+    def into_target(self, context_size: int):
+        vocab_size = self.word_box.vocab_size()
+        X = []
+        Y = []
+        for i in range(len(self.corpus)):
+            token_id = self.corpus[i]
+            context = []
+            for k in range(-context_size, context_size + 1):
+                if k != 0:
+                    context.append(self.corpus[(i + k) % len(self.corpus)])
+            X.append(context)
+            Y.append([1.0 if k == token_id else 0.0 for k in range(vocab_size)])
+        return torch.tensor(X, dtype=torch.long), torch.tensor(Y)
 
     def __getitem__(self, index: int):
         return self.word_box[self.corpus[index]]

@@ -17,4 +17,29 @@ class Word2Vec(nn.Module):
         context_vector = torch.mean(embedded, dim=1) # [batch_size, embedding_dim]
         y = self.out_embedding(context_vector) # [batch_size, vocab_size]
         return y
-        
+
+    def train(self, inputs: torch.LongTensor, targets: torch.Tensor, epoches, lr = 0.1, visualize = False):
+        plot_x = []
+        plot_y = []
+
+        loss_fn = nn.CrossEntropyLoss();
+        optimizer = torch.optim.SGD(params = self.parameters(), lr = lr)
+
+        for epoch in range(epoches):
+            optimizer.zero_grad()
+            y = self.forward(inputs) # [batch_size, vocab_size]
+            loss = loss_fn(y, targets)
+            loss.backward()
+            optimizer.step()
+
+            if visualize and epoch % 10 == 0:
+                plot_x.append(epoch)
+                plot_y.append(loss.item())
+
+        if visualize:
+            return plot_x, plot_y
+
+
+
+
+
