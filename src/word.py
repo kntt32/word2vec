@@ -1,5 +1,3 @@
-from . import corpus
-
 class Token:
     def __init__(self, word: str):
         self.word = word.strip()
@@ -40,17 +38,20 @@ class Tokenizer:
 
 class WordBox:
     def __init__(self):
-        self.box = set()
+        self.box = []
+
+    def vocab_size(self):
+        return len(self.box)
 
     def add(self, token: Token):
-        self.box.add(token)
+        if token not in self.box:
+            self.box.append(token)
+            return len(self.box) - 1
+        else:
+            return self.box.index(token)
 
     def add_from_str(self, s: str):
         for token in Tokenizer(s).generator():
-            self.add(token)
-
-    def add_from_corpus(self, corpus: corpus.Corpus):
-        for token in corpus:
             self.add(token)
 
     def __str__(self):

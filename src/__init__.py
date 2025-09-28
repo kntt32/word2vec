@@ -1,1 +1,1 @@
-__all__ = ["word", "corpus", "model"]
+__all__ = ["word", "corpus", "model", "trainer"]

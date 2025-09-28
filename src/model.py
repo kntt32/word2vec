@@ -1,13 +1,20 @@
-import torch.nn
+import torch
+from torch import nn
 from . import word
 from . import corpus
 
-class Model(nn.Module):
-    def __init__(self):
+class Word2Vec(nn.Module):
+    def __init__(self, embedding_dim: int):
         nn.Module.__init__(self)
-        self.corpus_list = []
-        self.word_box = word.WordBox()
+        self.embedding_dim = embedding_dim
 
-    def add(self, corpus):
-        self.corpus.append(corpus)
-        self.word_box.add_from_corpus(corpus)
+    def init_params(self, vocab_size: int):
+        self.in_embedding = nn.Embedding(vocab_size, self.embedding_dim)
+        self.out_embedding = nn.Linear(self.embedding_dim, vocab_size, bias = False)
+
+    def forward(self, x): # [batch_size, context_len]
+        embedded = self.in_embedding(x) # [batch_size, context_len, embedding_dim]
+        context_vector = torch.mean(embedded, dim=1) # [batch_size, embedding_dim]
+        y = self.out_embedding(context_vector) # [batch_size, vocab_size]
+        return y
+        
