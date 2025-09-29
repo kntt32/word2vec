@@ -9,13 +9,18 @@ class Word2Vec(nn.Module):
         self.embedding_dim = embedding_dim
 
     def init_params(self, vocab_size: int):
-        self.in_embedding = nn.Embedding(vocab_size, self.embedding_dim)
+        self.in_embedding = nn.EmbeddingBag(vocab_size, self.embedding_dim, mode="mean")
         self.out_embedding = nn.Linear(self.embedding_dim, vocab_size, bias = False)
+        self.layer = nn.Sequential(
+            self.in_embedding,
+            self.out_embedding,
+        )
 
     def forward(self, x): # [batch_size, context_len]
-        embedded = self.in_embedding(x) # [batch_size, context_len, embedding_dim]
-        context_vector = torch.mean(embedded, dim=1) # [batch_size, embedding_dim]
-        y = self.out_embedding(context_vector) # [batch_size, vocab_size]
+        y = self.layer(x)
+        # embedded = self.in_embedding(x) # [batch_size, context_len, embedding_dim]
+        # context_vector = torch.mean(embedded, dim=1) # [batch_size, embedding_dim]
+        # y = self.out_embedding(context_vector) # [batch_size, vocab_size]
         return y
 
     def train(self, inputs: torch.LongTensor, targets: torch.Tensor, epoches, lr = 0.1, visualize = False):
